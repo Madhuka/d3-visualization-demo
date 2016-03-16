@@ -1,0 +1,21 @@
+{
+    "version": "0.0.1",
+    "name": "gsoc",
+    "description": "Represent datasets - Iris Data",
+    "repository": "-",
+    "license": "MIT",
+    "author": "madhukaudantha@gmail.lk>",
+    "devDependencies": {
+        "http-server": "^0.6.1"
+    },
+    "dependencies": {
+        "jquery": "^2.2.1",
+        "bootstrap": "^3.3.6",
+        "d3": "^3.5.16",
+        "font-awesome": "^4.5.0"
+    },
+    "scripts": {
+        "prestart": "npm install",
+        "start": "http-server -a 0.0.0.0 -p 8082"
+    }
+}
