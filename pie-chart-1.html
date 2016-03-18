@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    .arc text {
+        font: 10px sans-serif;
+        text-anchor: middle;
+    }
+    
+    .arc path {
+        stroke: #fff;
+    }
+</style>
+
+<body>
+    <script src="/js/lib/d3.v3.min.js"></script>
+    <script>
+        var width = 960,
+            height = 500,
+            radius = Math.min(width, height) / 2;
+
+        var color = d3.scale.ordinal()
+            .range(["#EB7514", "#C8EB14", "#14EB51", "#14CBEB", "#1814EB", "#B614EB", "#EB1418"]);
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(0);
+
+        var labelArc = d3.svg.arc()
+            .outerRadius(radius - 40)
+            .innerRadius(radius - 40);
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) {
+                return d.count;
+            });
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
+        d3.tsv("data.tsv", function(error, data) {
+            if (error) throw error;
+            var count1 = 0,
+                count2 = 0,
+                count3 = 0,
+                count4 = 0,
+                count5 = 0;
+            var filteredData = data.filter(function(d) {
+                    //console.log(d["species"]);
+                    if (d["species"] == "versicolor") {
+                        var width = d["sepalWidth"];
+
+                        switch (true) {
+
+                            case width <= 2.5:
+
+                                count1++;
+                                break;
+                            case width <= 3:
+                                count2++;
+                                break;
+                            case width <= 3.5:
+                                count3++;
+                                break;
+                            case width <= 4:
+                                count4++;
+                                break;
+                            case width > 4:
+                                count5++;
+                                break;
+
+                        }
+                        return d;
+                    }
+
+                })
+                //Data range (<=2.5), (>2.5 and <=3), (>3 and <= 3.5), (>3.5 and <= 4), (>4)
+            var dataset = [{
+                label: '<=2.5',
+                count: count1
+            }, {
+                label: '>2.5 and <=3',
+                count: count2
+            }, {
+                label: '>3 and <= 3.5',
+                count: count3
+            }, {
+                label: '>3.5 and <= 4',
+                count: count4
+            }, {
+                label: '(>4)',
+                count: count5
+            }];
+            var g = svg.selectAll(".arc")
+                .data(pie(dataset))
+                .enter().append("g")
+                .attr("class", "arc");
+
+            g.append("path")
+                .attr("d", arc)
+                .style("fill", function(d) {
+                    return color(d.data.label);
+                });
+
+            g.append("text")
+                .attr("transform", function(d) {
+                    return "translate(" + labelArc.centroid(d) + ")";
+                })
+                .attr("dy", ".55em")
+                .text(function(d) {
+                    return d.data.label;
+                });
+        });
+    </script>
