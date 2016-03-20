@@ -1,0 +1,30 @@
+body {
+    font - family: "Helvetica Neue", Helvetica, Arial, sans - serif;
+    margin: auto;
+    /*position: relative;*/
+    /*width: 1800px;*/
+}
+
+text {
+    font: 10 px sans - serif;
+}
+
+form {
+    position: absolute;
+    right: 10 px;
+    top: 10 px;
+}
+
+#
+chartTitle {
+    font - size: 24 px;
+    padding: 30 px;
+}
+
+#
+info {
+    font - size: 18 px;
+    padding: 30 px;
+    padding - left: 80 px;
+    font - weight: bold;
+}
