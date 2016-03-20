@@ -20,11 +20,18 @@
         right: 10px;
         top: 10px;
     }
-
+    
     #chartTitle {
         font-size: 24px;
-		padding: 30px;
-		padding-left:100px
+        padding: 30px;
+        padding-left: 200px;
+    }
+    
+    #info {
+        font-size: 18px;
+        padding: 30px;
+        padding-left: 80px;
+        font-weight: bold;
     }
 </style>
 <script src="/js/lib/d3.v3.min.js"></script>
@@ -33,17 +40,29 @@
 <body>
 
 
-<h2>D3 transitions for species</h2>
-       
-            <input type="radio" name="radData" id="rad0" value="setosaData" checked="checked" onclick='change(setosaData,"Setosa");' />
-            <label for="rad1">Setosa</label>
-            <input type="radio" name="radData" id="rad1" value="versicolorData" onclick='change(versicolorData,"Versicolor");' />
-            <label for="rad2">Versicolor</label>
-            <input type="radio" name="radData" id="rad2" value="virginicaData" onclick='change(virginicaData,"Virginica");' />
-            <label for="rad3">Virginica</label>
-            </br>
-            <div id='chartTitle'>Setosa Sepal Width</div>
-            <div id='chartDiv'></div>
+    <h2>D3 transitions for species</h2>
+
+    <input type="radio" name="radData" id="rad0" value="setosaData" checked="checked" onclick='change(setosaData,"Setosa");' />
+    <label for="rad1">Setosa</label>
+    <input type="radio" name="radData" id="rad1" value="versicolorData" onclick='change(versicolorData,"Versicolor");' />
+    <label for="rad2">Versicolor</label>
+    <input type="radio" name="radData" id="rad2" value="virginicaData" onclick='change(virginicaData,"Virginica");' />
+    <label for="rad3">Virginica</label>
+    </br>
+    <div id='chartTitle'>Setosa Sepal Width</div>
+
+    <div id='chartDiv'></div>
+
+    <div id='info'> A pie chart displaying sepal Width falling in these categories: <br>
+        <font color="#EB7514">(
+            <=2.5) </font>,
+                <font color="#C8EB14">(>2.5 and
+                    <=3) </font>,
+                        <font color="#14EB51">(>3 and
+                            <=3 .5) </font>,
+                                <font color="#14CBEB">(>3.5 and
+                                    <=4 ) </font>,
+                                        <font color="#1814EB">(>4)</font>.</div>
 
 
 </body>
@@ -53,8 +72,9 @@
         count3 = 0,
         count4 = 0,
         count5 = 0;
-    var counter = [],dataContainer=[];
-	var type = ['Setosa','Versicolor','Virginica'];
+    var counter = [],
+        dataContainer = [];
+    var type = ['Setosa', 'Versicolor', 'Virginica'];
     //Data range (<=2.5), (>2.5 and <=3), (>3 and <= 3.5), (>3.5 and <= 4), (>4)
     var dataset = [{
         range: '<=2.5',
@@ -84,7 +104,7 @@
     d3.tsv("data.tsv", function(error, data) {
         if (error) throw error;
 
-        
+
         //filtering for species and search for range of sepalWidth
         var filteredData = data.filter(function(d) {
             //filtering by species and only collecting sepalWidth regard improving the performance 
@@ -102,8 +122,9 @@
         setosaData = countRange(setosa);
         versicolorData = countRange(versicolor);
         virginicaData = countRange(virginica);
-		change(setosaData,'Setosa');
- dataContainer = [setosaData, versicolorData, virginicaData];
+        change(setosaData, 'Setosa');
+        dataContainer = [setosaData, versicolorData, virginicaData];
+
         function countRange(dataArg) {
             var model;
             count1 = 0,
@@ -113,8 +134,6 @@
                 count5 = 0;
             for (var i = 0; i < dataArg.length; i++) {
                 model = countData(dataArg[i]);
-                //console.log(countData(versicolor[i]));
-                //console.log(countData(virginica[i]));
                 if (i == dataArg.length - 1) {
                     console.log(model);
                     return model;
@@ -220,24 +239,27 @@
         }); // store the initial angles
 
 
-    function change(data,name) {
-        $('#chartTitle').text(name +' Sepal Width');
+    function change(data, name) {
+        $('#chartTitle').text(name + ' Sepal Width');
         path.data(pie(data));
         path.transition().duration(650).attrTween("d", arcTween); // redraw the arcs
 
     }
-	
-	var currentShow =0;
-function test() {
-if(currentShow==3){currentShow=0;}
 
-$("#rad"+currentShow).prop("checked", true);
-change(dataContainer[currentShow]);
-$('#chartTitle').text(type[currentShow] +' Sepal Width');
-console.log('types[xc]');
-currentShow++;
-}
-var refreshId = setInterval(test, 3000);
+    var currentShow = 0;
+
+    function test() {
+        if (currentShow == 3) {
+            currentShow = 0;
+        }
+
+        $("#rad" + currentShow).prop("checked", true);
+        change(dataContainer[currentShow]);
+        $('#chartTitle').text(type[currentShow] + ' Sepal Width');
+        console.log('types[xc]');
+        currentShow++;
+    }
+    var refreshId = setInterval(test, 3000);
 
     // Store the displayed angles in _current.
     // Then, interpolate from _current to the new angles.
