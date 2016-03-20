@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
-    .arc text {
-        font: 10px sans-serif;
-        text-anchor: middle;
-    }
-    
-    .arc path {
-        stroke: #fff;
-    }
-</style>
+<html>
+
+<head>
+    <title>Pie Chart D3</title>
+
+    <!-- style is used in inner html as show all the codes in simple html files-->
+    <style>
+        .arc text {
+            font: 16px sans-serif;
+            text-anchor: middle;
+        }
+        
+        .arc path {
+            stroke: #fff;
+        }
+    </style>
+</head>
 
 <body>
     <script src="/js/lib/d3.v3.min.js"></script>
+    <h2> Sepal Width for Versicolor </h2>
+    <p> Sepal Width are group with (
+        <=2.5), (>2.5 and
+            <=3), (>3 and
+                <=3 .5), (>3.5 and
+                    <=4 ), (>4) </P>
     <script>
-        var width = 960,
-            height = 500,
+        var width = 750,
+            height = 450,
             radius = Math.min(width, height) / 2;
 
+        //set colors for to render for pie chart
         var color = d3.scale.ordinal()
             .range(["#EB7514", "#C8EB14", "#14EB51", "#14CBEB", "#1814EB", "#B614EB", "#EB1418"]);
 
@@ -41,7 +55,7 @@
             .append("g")
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-
+        //reading tsv fill for data
         d3.tsv("data.tsv", function(error, data) {
             if (error) throw error;
             var count1 = 0,
@@ -49,15 +63,15 @@
                 count3 = 0,
                 count4 = 0,
                 count5 = 0;
+
+            //filtering for species and search for range of sepalWidth
             var filteredData = data.filter(function(d) {
-                    //console.log(d["species"]);
                     if (d["species"] == "versicolor") {
                         var width = d["sepalWidth"];
 
                         switch (true) {
 
                             case width <= 2.5:
-
                                 count1++;
                                 break;
                             case width <= 3:
@@ -78,23 +92,56 @@
                     }
 
                 })
-                //Data range (<=2.5), (>2.5 and <=3), (>3 and <= 3.5), (>3.5 and <= 4), (>4)
+            //Data range (<=2.5), (>2.5 and <=3), (>3 and <= 3.5), (>3.5 and <= 4), (>4)
             var dataset = [{
-                label: '<=2.5',
+                range: '<=2.5',
                 count: count1
             }, {
-                label: '>2.5 and <=3',
+                range: '>2.5 and <=3',
                 count: count2
             }, {
-                label: '>3 and <= 3.5',
+                range: '>3 and <= 3.5',
                 count: count3
             }, {
-                label: '>3.5 and <= 4',
+                range: '>3.5 and <= 4',
                 count: count4
             }, {
-                label: '(>4)',
+                range: '(>4)',
                 count: count5
             }];
+
+            // create the table header
+            var thead = d3.select("thead").selectAll("th")
+                .data(d3.keys(dataset[0]))
+                .enter().append("th").text(function(d) {
+                    return d
+                });
+            // fill the table
+            // create rows
+            var tr = d3.select("tbody").selectAll("tr")
+                .data(dataset).enter().append("tr")
+                // cells
+            var td = tr.selectAll("td")
+
+            .data(function(d) {
+                    return d3.values(d)
+                })
+                .enter().append("td")
+                .text(function(d) {
+                    return d
+                });
+            console.log(td);
+
+            //cleaning and filtering dataset for rendering
+            for (var i = 0; i < dataset.length; i++) {
+
+                if (dataset[i].count == 0) {
+                    dataset.splice(i, 1);
+                    i--;
+                }
+            }
+
+
             var g = svg.selectAll(".arc")
                 .data(pie(dataset))
                 .enter().append("g")
@@ -103,7 +150,7 @@
             g.append("path")
                 .attr("d", arc)
                 .style("fill", function(d) {
-                    return color(d.data.label);
+                    return color(d.data.range);
                 });
 
             g.append("text")
@@ -112,7 +159,15 @@
                 })
                 .attr("dy", ".55em")
                 .text(function(d) {
-                    return d.data.label;
+                    return d.data.range;
                 });
         });
     </script>
+    <!--tabel to show data count for which range-->
+    <table border="1" cellpadding="10">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+</body>
+
+</html>
